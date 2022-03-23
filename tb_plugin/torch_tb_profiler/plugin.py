@@ -98,6 +98,7 @@ class TorchProfilerPlugin(base_plugin.TBPlugin):
             '/workers': self.workers_route,
             '/spans': self.spans_route,
             '/overview': self.overview_route,
+            '/codebase': self.codebase_route,
             '/operation': self.operation_pie_route,
             '/operation/table': self.operation_table_route,
             '/operation/stack': self.operation_stack_route,
@@ -172,6 +173,15 @@ class TorchProfilerPlugin(base_plugin.TBPlugin):
                                    'tooltip': profile.gpu_tooltip}
 
         return self.respond_as_json(data)
+
+    @wrappers.Request.application
+    def codebase_route(self, request: werkzeug.Request):
+        profile = self._get_profile_for_request(request)
+        name = request.args.get('run')
+        run = self._get_run(name)
+        data = profile.codebase
+        return self.respond_as_json(data)
+
 
     @wrappers.Request.application
     def operation_pie_route(self, request: werkzeug.Request):

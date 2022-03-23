@@ -10,7 +10,7 @@ The following functionalities are added after forking:
 * add Azure blob file system
 * add Google Cloud file system
 * add specialized walk for Local file system, Azure Blob and Google Cloud to improve the walk performance.
-* add global wrapper for abspath, basename, join, download_file.
+* add global wrapper for abspath, basename, join, dirname, download_file.
 * change the global walk wrapper to support specialized walk.
 """
 import glob as py_glob
@@ -522,6 +522,8 @@ def abspath(path):
 def basename(path):
     return get_filesystem(path).basename(path)
 
+def dirname(path):
+    return get_filesystem(path).dirname(path)
 
 def relpath(path, start):
     return get_filesystem(path).relpath(path, start)

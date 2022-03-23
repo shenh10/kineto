@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- *--------------------------------------------------------------------------------------------*/
-
 /// <reference path="./custom.d.ts" />
 // tslint:disable
 /**
@@ -163,6 +159,19 @@ export interface CallStackTableDataInner {
    * @memberof CallStackTableDataInner
    */
   tc_total_ratio?: number
+}
+/**
+ *
+ * @export
+ * @interface Codebase
+ */
+export interface Codebase {
+  /**
+   *
+   * @type {PythonBottleneck}
+   * @memberof Codebase
+   */
+  python_bottleneck: PythonBottleneck
 }
 /**
  *
@@ -1086,6 +1095,25 @@ export interface Performance {
 /**
  *
  * @export
+ * @interface PythonBottleneck
+ */
+export interface PythonBottleneck {
+  /**
+   *
+   * @type {string}
+   * @memberof PythonBottleneck
+   */
+  image_path?: string
+  /**
+   *
+   * @type {string}
+   * @memberof PythonBottleneck
+   */
+  image_content: string
+}
+/**
+ *
+ * @export
  * @interface Runs
  */
 export interface Runs {
@@ -1180,6 +1208,78 @@ export const DefaultApiFetchParamCreator = function (
   configuration?: Configuration
 ) {
   return {
+    /**
+     *
+     * @param {string} run
+     * @param {string} worker
+     * @param {string} span
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    codebaseGet(
+      run: string,
+      worker: string,
+      span: string,
+      options: any = {}
+    ): FetchArgs {
+      // verify required parameter 'run' is not null or undefined
+      if (run === null || run === undefined) {
+        throw new RequiredError(
+          'run',
+          'Required parameter run was null or undefined when calling codebaseGet.'
+        )
+      }
+      // verify required parameter 'worker' is not null or undefined
+      if (worker === null || worker === undefined) {
+        throw new RequiredError(
+          'worker',
+          'Required parameter worker was null or undefined when calling codebaseGet.'
+        )
+      }
+      // verify required parameter 'span' is not null or undefined
+      if (span === null || span === undefined) {
+        throw new RequiredError(
+          'span',
+          'Required parameter span was null or undefined when calling codebaseGet.'
+        )
+      }
+      const localVarPath = `/codebase`
+      const localVarUrlObj = url.parse(localVarPath, true)
+      const localVarRequestOptions = Object.assign({ method: 'GET' }, options)
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
+
+      if (run !== undefined) {
+        localVarQueryParameter['run'] = run
+      }
+
+      if (worker !== undefined) {
+        localVarQueryParameter['worker'] = worker
+      }
+
+      if (span !== undefined) {
+        localVarQueryParameter['span'] = span
+      }
+
+      localVarUrlObj.query = Object.assign(
+        {},
+        localVarUrlObj.query,
+        localVarQueryParameter,
+        options.query
+      )
+      // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+      delete localVarUrlObj.search
+      localVarRequestOptions.headers = Object.assign(
+        {},
+        localVarHeaderParameter,
+        options.headers
+      )
+
+      return {
+        url: url.format(localVarUrlObj),
+        options: localVarRequestOptions
+      }
+    },
     /**
      *
      * @param {string} run
@@ -2820,6 +2920,39 @@ export const DefaultApiFp = function (configuration?: Configuration) {
      * @param {string} run
      * @param {string} worker
      * @param {string} span
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    codebaseGet(
+      run: string,
+      worker: string,
+      span: string,
+      options?: any
+    ): (fetch?: FetchAPI, basePath?: string) => Promise<Codebase> {
+      const localVarFetchArgs = DefaultApiFetchParamCreator(
+        configuration
+      ).codebaseGet(run, worker, span, options)
+      return (
+        fetch: FetchAPI = portableFetch,
+        basePath: string = BASE_PATH
+      ) => {
+        return fetch(
+          basePath + localVarFetchArgs.url,
+          localVarFetchArgs.options
+        ).then((response) => {
+          if (response.status >= 200 && response.status < 300) {
+            return response.json()
+          } else {
+            throw response
+          }
+        })
+      }
+    },
+    /**
+     *
+     * @param {string} run
+     * @param {string} worker
+     * @param {string} span
      * @param {string} exp_run
      * @param {string} exp_worker
      * @param {string} exp_span
@@ -3398,9 +3531,8 @@ export const DefaultApiFp = function (configuration?: Configuration) {
     runsGet(
       options?: any
     ): (fetch?: FetchAPI, basePath?: string) => Promise<Runs> {
-      const localVarFetchArgs = DefaultApiFetchParamCreator(
-        configuration
-      ).runsGet(options)
+      const localVarFetchArgs =
+        DefaultApiFetchParamCreator(configuration).runsGet(options)
       return (
         fetch: FetchAPI = portableFetch,
         basePath: string = BASE_PATH
@@ -3587,6 +3719,22 @@ export const DefaultApiFactory = function (
   basePath?: string
 ) {
   return {
+    /**
+     *
+     * @param {string} run
+     * @param {string} worker
+     * @param {string} span
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    codebaseGet(run: string, worker: string, span: string, options?: any) {
+      return DefaultApiFp(configuration).codebaseGet(
+        run,
+        worker,
+        span,
+        options
+      )(fetch, basePath)
+    },
     /**
      *
      * @param {string} run
@@ -4035,6 +4183,24 @@ export const DefaultApiFactory = function (
  * @extends {BaseAPI}
  */
 export class DefaultApi extends BaseAPI {
+  /**
+   *
+   * @param {string} run
+   * @param {string} worker
+   * @param {string} span
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof DefaultApi
+   */
+  public codebaseGet(run: string, worker: string, span: string, options?: any) {
+    return DefaultApiFp(this.configuration).codebaseGet(
+      run,
+      worker,
+      span,
+      options
+    )(this.fetch, this.basePath)
+  }
+
   /**
    *
    * @param {string} run

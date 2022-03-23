@@ -68,7 +68,10 @@ class BasePath(ABC):
     @abstractmethod
     def relpath(self, path, start):
         pass
-
+    
+    @abstractmethod
+    def dirname(self, path):
+        pass
 
 class LocalPath(BasePath):
     def abspath(self, path):
@@ -83,6 +86,8 @@ class LocalPath(BasePath):
     def join(self, path, *paths):
         return os.path.join(path, *paths)
 
+    def dirname(self, path):
+        return os.path.dirname(path)
 
 class RemotePath(BasePath):
     def split(self, path):
@@ -110,3 +115,6 @@ class RemotePath(BasePath):
         start = start.rstrip('/')
         begin = len(start) + 1  # include the ending slash '/'
         return path[begin:]
+
+    def dirname(self, path):
+        return '/'.join(path.split('/')[:-1])

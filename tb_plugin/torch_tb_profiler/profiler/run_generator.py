@@ -3,7 +3,6 @@
 # --------------------------------------------------------------------------
 from collections import OrderedDict
 from typing import Dict, Iterable, List
-
 from .. import consts, utils
 from ..run import DistributedRunProfile, RunProfile
 from .data import DistributedRunProfileData, RunProfileData
@@ -73,6 +72,10 @@ class RunGenerator(object):
             profile_run.views.append(consts.LIGHTNING_VIEW)
         elif profile_run.module_stats:
             profile_run.views.append(consts.MODULE_VIEW)
+
+        profile_run.codebase = self.profile_data.codebase
+        profile_run.views.append(consts.CODEBASE_VIEW)
+
 
         return profile_run
 

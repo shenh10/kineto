@@ -4,7 +4,7 @@
 import re
 from collections import namedtuple
 
-PLUGIN_NAME = 'pytorch_profiler'
+PLUGIN_NAME = 'kwai_pytorch_profiler'
 
 WORKER_PATTERN = re.compile(r"""^(.*?) # worker name
         (\.\d+)? # optional timestamp like 1619499959628 used as span name
@@ -24,6 +24,7 @@ DISTRIBUTED_VIEW = View(5, 'distributed', 'Distributed')
 MEMORY_VIEW = View(6, 'memory', 'Memory')
 MODULE_VIEW = View(7, 'module', 'Module')
 LIGHTNING_VIEW = View(8, 'lightning', 'Lightning')
+CODEBASE_VIEW = View(9, 'codebase', 'Codebase')
 
 TOOLTIP_GPU_UTIL = \
     'GPU Utilization:\n' \

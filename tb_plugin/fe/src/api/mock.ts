@@ -28,6 +28,15 @@ export class MockAPI {
     return Promise.resolve(['worker0'])
   }
 
+  codebaseGet(run: string, worker: string, span: string) {
+    return Promise.resolve({
+      python_bottleneck: {
+        image_path: './images/demo.png',
+        image_content: ''
+      }
+    })
+  }
+
   overviewGet(run: string, worker: string, span: string) {
     return Promise.resolve({
       steps: {
@@ -803,8 +812,7 @@ export class MockAPI {
             self_device_duration: 0
           },
           {
-            name:
-              'autograd::engine::evaluate_function: torch::autograd::AccumulateGrad',
+            name: 'autograd::engine::evaluate_function: torch::autograd::AccumulateGrad',
             calls: 322,
             host_duration: 70946,
             device_duration: 997,
@@ -924,8 +932,7 @@ export class MockAPI {
             self_device_duration: 0
           },
           {
-            name:
-              'autograd::engine::evaluate_function: CudnnBatchNormBackward0',
+            name: 'autograd::engine::evaluate_function: CudnnBatchNormBackward0',
             calls: 106,
             host_duration: 88613,
             device_duration: 44433,
@@ -965,8 +972,7 @@ export class MockAPI {
             self_device_duration: 0
           },
           {
-            name:
-              'autograd::engine::evaluate_function: CudnnConvolutionBackward0',
+            name: 'autograd::engine::evaluate_function: CudnnConvolutionBackward0',
             calls: 106,
             host_duration: 129129,
             device_duration: 177161,
@@ -990,8 +996,7 @@ export class MockAPI {
             self_device_duration: 0
           },
           {
-            name:
-              'autograd::engine::evaluate_function: MaxPool2DWithIndicesBackward0',
+            name: 'autograd::engine::evaluate_function: MaxPool2DWithIndicesBackward0',
             calls: 2,
             host_duration: 836,
             device_duration: 3048,
@@ -1607,8 +1612,7 @@ export class MockAPI {
             self_device_duration: 0
           },
           {
-            name:
-              'autograd::engine::evaluate_function: torch::autograd::AccumulateGrad',
+            name: 'autograd::engine::evaluate_function: torch::autograd::AccumulateGrad',
             calls: 322,
             host_duration: 15128,
             device_duration: 1069,
@@ -1728,8 +1732,7 @@ export class MockAPI {
             self_device_duration: 0
           },
           {
-            name:
-              'autograd::engine::evaluate_function: CudnnBatchNormBackward0',
+            name: 'autograd::engine::evaluate_function: CudnnBatchNormBackward0',
             calls: 106,
             host_duration: 14696,
             device_duration: 44401,
@@ -1769,8 +1772,7 @@ export class MockAPI {
             self_device_duration: 0
           },
           {
-            name:
-              'autograd::engine::evaluate_function: CudnnConvolutionBackward0',
+            name: 'autograd::engine::evaluate_function: CudnnConvolutionBackward0',
             calls: 106,
             host_duration: 45209,
             device_duration: 175014,
@@ -1794,8 +1796,7 @@ export class MockAPI {
             self_device_duration: 0
           },
           {
-            name:
-              'autograd::engine::evaluate_function: MaxPool2DWithIndicesBackward0',
+            name: 'autograd::engine::evaluate_function: MaxPool2DWithIndicesBackward0',
             calls: 2,
             host_duration: 209,
             device_duration: 3016,
@@ -3342,8 +3343,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: LogSoftmaxBackward0',
+                name: 'autograd::engine::evaluate_function: LogSoftmaxBackward0',
                 calls: 1,
                 host_duration: 349,
                 device_duration: 9,
@@ -3415,8 +3415,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: LogSoftmaxBackward0',
+                name: 'autograd::engine::evaluate_function: LogSoftmaxBackward0',
                 calls: 1,
                 host_duration: 64,
                 device_duration: 9,
@@ -3515,8 +3514,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: torch::autograd::AccumulateGrad',
+                name: 'autograd::engine::evaluate_function: torch::autograd::AccumulateGrad',
                 calls: 161,
                 host_duration: 35735,
                 device_duration: 501,
@@ -3564,8 +3562,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: ReshapeAliasBackward0',
+                name: 'autograd::engine::evaluate_function: ReshapeAliasBackward0',
                 calls: 1,
                 host_duration: 197,
                 device_duration: 0,
@@ -3677,8 +3674,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: CudnnBatchNormBackward0',
+                name: 'autograd::engine::evaluate_function: CudnnBatchNormBackward0',
                 calls: 53,
                 host_duration: 44607,
                 device_duration: 22267,
@@ -3718,8 +3714,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: CudnnConvolutionBackward0',
+                name: 'autograd::engine::evaluate_function: CudnnConvolutionBackward0',
                 calls: 53,
                 host_duration: 64252,
                 device_duration: 89775,
@@ -3767,8 +3762,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: MaxPool2DWithIndicesBackward0',
+                name: 'autograd::engine::evaluate_function: MaxPool2DWithIndicesBackward0',
                 calls: 1,
                 host_duration: 425,
                 device_duration: 1544,
@@ -3864,8 +3858,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: torch::autograd::AccumulateGrad',
+                name: 'autograd::engine::evaluate_function: torch::autograd::AccumulateGrad',
                 calls: 161,
                 host_duration: 7473,
                 device_duration: 534,
@@ -3913,8 +3906,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: ReshapeAliasBackward0',
+                name: 'autograd::engine::evaluate_function: ReshapeAliasBackward0',
                 calls: 1,
                 host_duration: 21,
                 device_duration: 0,
@@ -4026,8 +4018,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: CudnnBatchNormBackward0',
+                name: 'autograd::engine::evaluate_function: CudnnBatchNormBackward0',
                 calls: 53,
                 host_duration: 7289,
                 device_duration: 22157,
@@ -4067,8 +4058,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: CudnnConvolutionBackward0',
+                name: 'autograd::engine::evaluate_function: CudnnConvolutionBackward0',
                 calls: 53,
                 host_duration: 22185,
                 device_duration: 87283,
@@ -4116,8 +4106,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: MaxPool2DWithIndicesBackward0',
+                name: 'autograd::engine::evaluate_function: MaxPool2DWithIndicesBackward0',
                 calls: 1,
                 host_duration: 103,
                 device_duration: 1503,
@@ -5790,8 +5779,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: LogSoftmaxBackward0',
+                name: 'autograd::engine::evaluate_function: LogSoftmaxBackward0',
                 calls: 1,
                 host_duration: 283,
                 device_duration: 9,
@@ -5863,8 +5851,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: LogSoftmaxBackward0',
+                name: 'autograd::engine::evaluate_function: LogSoftmaxBackward0',
                 calls: 1,
                 host_duration: 62,
                 device_duration: 9,
@@ -5963,8 +5950,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: torch::autograd::AccumulateGrad',
+                name: 'autograd::engine::evaluate_function: torch::autograd::AccumulateGrad',
                 calls: 161,
                 host_duration: 35211,
                 device_duration: 496,
@@ -6012,8 +5998,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: ReshapeAliasBackward0',
+                name: 'autograd::engine::evaluate_function: ReshapeAliasBackward0',
                 calls: 1,
                 host_duration: 205,
                 device_duration: 0,
@@ -6125,8 +6110,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: CudnnBatchNormBackward0',
+                name: 'autograd::engine::evaluate_function: CudnnBatchNormBackward0',
                 calls: 53,
                 host_duration: 44006,
                 device_duration: 22166,
@@ -6166,8 +6150,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: CudnnConvolutionBackward0',
+                name: 'autograd::engine::evaluate_function: CudnnConvolutionBackward0',
                 calls: 53,
                 host_duration: 64877,
                 device_duration: 87386,
@@ -6215,8 +6198,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: MaxPool2DWithIndicesBackward0',
+                name: 'autograd::engine::evaluate_function: MaxPool2DWithIndicesBackward0',
                 calls: 1,
                 host_duration: 411,
                 device_duration: 1504,
@@ -6312,8 +6294,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: torch::autograd::AccumulateGrad',
+                name: 'autograd::engine::evaluate_function: torch::autograd::AccumulateGrad',
                 calls: 161,
                 host_duration: 7655,
                 device_duration: 535,
@@ -6361,8 +6342,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: ReshapeAliasBackward0',
+                name: 'autograd::engine::evaluate_function: ReshapeAliasBackward0',
                 calls: 1,
                 host_duration: 27,
                 device_duration: 0,
@@ -6474,8 +6454,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: CudnnBatchNormBackward0',
+                name: 'autograd::engine::evaluate_function: CudnnBatchNormBackward0',
                 calls: 53,
                 host_duration: 7407,
                 device_duration: 22244,
@@ -6515,8 +6494,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: CudnnConvolutionBackward0',
+                name: 'autograd::engine::evaluate_function: CudnnConvolutionBackward0',
                 calls: 53,
                 host_duration: 23024,
                 device_duration: 87731,
@@ -6564,8 +6542,7 @@ export class MockAPI {
                 self_device_duration: 0
               },
               {
-                name:
-                  'autograd::engine::evaluate_function: MaxPool2DWithIndicesBackward0',
+                name: 'autograd::engine::evaluate_function: MaxPool2DWithIndicesBackward0',
                 calls: 1,
                 host_duration: 106,
                 device_duration: 1513,

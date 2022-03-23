@@ -116,6 +116,7 @@ class RunProfile(object):
         self.kernel_table = None
         self.tc_pie = None
         self.trace_file_path: str = None
+        self.codebase = None
 
         self.gpu_metrics = None
 

@@ -37,6 +37,7 @@ import { ModuleView } from './components/ModuleView'
 import { Operator } from './components/Operator'
 import { Overview } from './components/Overview'
 import { TraceView } from './components/TraceView'
+import { CodebaseView } from './components/CodebaseView'
 import { setup } from './setup'
 import './styles.css'
 import { firstOrUndefined, sleep } from './utils'
@@ -49,7 +50,8 @@ export enum Views {
   Distributed = 'Distributed',
   Memory = 'Memory',
   Module = 'Module',
-  Lightning = 'Lightning'
+  Lightning = 'Lightning',
+  Codebase = 'Codebase'
 }
 
 const ViewNames = {
@@ -60,7 +62,8 @@ const ViewNames = {
   [Views.Distributed]: Views.Distributed,
   [Views.Memory]: Views.Memory,
   [Views.Module]: Views.Module,
-  [Views.Lightning]: Views.Lightning
+  [Views.Lightning]: Views.Lightning,
+  [Views.Codebase]: Views.Codebase
 }
 
 const drawerWidth = 340
@@ -411,6 +414,8 @@ export const App = () => {
         case Views.Module:
         case Views.Lightning:
           return <ModuleView run={run} worker={worker} span={span} />
+        case Views.Codebase:
+          return <CodebaseView run={run} worker={worker} span={span} />
       }
     } else {
       return (

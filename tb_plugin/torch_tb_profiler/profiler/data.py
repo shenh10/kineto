@@ -5,10 +5,10 @@ import gzip
 import io as sysio
 import json
 import re
+import base64
 import tempfile
 from json.decoder import JSONDecodeError
 from typing import Dict, List, Optional
-
 from .. import io, utils
 from ..utils import href
 from . import trace
@@ -96,12 +96,33 @@ class RunProfileData(object):
         # recommendation based on analysis result.
         self.recommendations = []
 
+        # codebase
+        self.codebase: Dict[str, Dict[str, str]] = {'python_bottleneck': {}}
+
+    @staticmethod
+    def retreive_codebase_stats(path):
+        dirname, basename = io.dirname(path), io.basename(path)
+        dirname = io.join(dirname, '../')
+        basename = basename.rstrip('.pt.trace.json')
+        image_path = io.join(dirname, basename + '.png')
+        stats_path = io.join(dirname, basename + '.pstats')
+        if io.exists(image_path) and io.exists(stats_path):
+            with open(image_path, "rb") as img_file:
+                b64_string = base64.b64encode(img_file.read())
+                b64_string = b64_string.decode('utf-8')
+            return b64_string, stats_path
+        logger.warning(f"No codebase profiling data exists.  Expected path: {image_path}")
+        return None, None
+
     @staticmethod
     def parse(worker, span, path, cache_dir):
         trace_path, trace_json = RunProfileData._preprocess_file(path, cache_dir)
-
+    
         profile = RunProfileData.from_json(worker, span, trace_json)
         profile.trace_file_path = trace_path
+        image_content, stats_path = RunProfileData.retreive_codebase_stats(trace_path)
+        if image_content and stats_path:
+            profile.codebase['python_bottleneck']['image_content'] = image_content
         return profile
 
     @staticmethod

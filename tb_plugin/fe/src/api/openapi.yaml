@@ -107,6 +107,31 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/Overview'
+  /codebase:
+    get:
+      parameters:
+        - in: query
+          name: run
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: worker
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: span
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Codebase'
   /operation:
     get:
       parameters:
@@ -770,6 +795,13 @@ components:
           type: string
         gpu_metrics:
           $ref: '#/components/schemas/GpuMetrics'
+    Codebase:
+      type: object
+      required:
+        - python_bottleneck
+      properties:
+        python_bottleneck:
+          $ref: '#/components/schemas/PythonBottleneck'
     OperatorGraph:
       type: object
       required:
@@ -943,6 +975,15 @@ components:
         title:
           type: string
         value:
+          type: string
+    PythonBottleneck:
+      type: object
+      required:
+        - image_content
+      properties:
+        image_path:
+          type: string
+        image_content:
           type: string
     MemoryStatsData:
       type: object
