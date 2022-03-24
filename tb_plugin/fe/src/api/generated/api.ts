@@ -1,3 +1,7 @@
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ *--------------------------------------------------------------------------------------------*/
+
 /// <reference path="./custom.d.ts" />
 // tslint:disable
 /**
@@ -1058,6 +1062,25 @@ export interface Overview {
 /**
  *
  * @export
+ * @interface PStatsGraph
+ */
+export interface PStatsGraph {
+  /**
+   *
+   * @type {Graph}
+   * @memberof PStatsGraph
+   */
+  data: Graph
+  /**
+   *
+   * @type {TableMetadata}
+   * @memberof PStatsGraph
+   */
+  metadata: TableMetadata
+}
+/**
+ *
+ * @export
  * @interface Performance
  */
 export interface Performance {
@@ -1110,6 +1133,12 @@ export interface PythonBottleneck {
    * @memberof PythonBottleneck
    */
   image_content: string
+  /**
+   *
+   * @type {PStatsGraph}
+   * @memberof PythonBottleneck
+   */
+  pstats: PStatsGraph
 }
 /**
  *

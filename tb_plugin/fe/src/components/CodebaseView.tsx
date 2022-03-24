@@ -10,6 +10,8 @@ import { makeStyles } from '@material-ui/core/styles'
 import CardMedia from '@material-ui/core/CardMedia'
 import * as React from 'react'
 import * as api from '../api'
+import { AntTableChart } from './charts/AntTableChart'
+import { DataLoading } from './DataLoading'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,6 +30,10 @@ export const CodebaseView: React.FC<IProps> = (props) => {
   const [pythonBottleneck, setPythonBottleneck] = React.useState<
     api.PythonBottleneck | undefined
   >(undefined)
+  const [pStatsGraph, setPStatsGraph] = React.useState<api.Graph | undefined>(
+    undefined
+  )
+  const [sortColumn, setSortColumn] = React.useState('')
 
   React.useEffect(() => {
     api.defaultApi.codebaseGet(run, worker, span).then((resp) => {
@@ -36,26 +42,42 @@ export const CodebaseView: React.FC<IProps> = (props) => {
   }, [run, worker, span])
   const classes = useStyles()
 
+  React.useEffect(() => {
+    if (pythonBottleneck) {
+      setPStatsGraph(pythonBottleneck.pstats.data)
+      setSortColumn(pythonBottleneck.pstats.metadata.sort)
+    }
+  }, [pythonBottleneck])
+
   return (
     <div className={classes.root}>
-      <Grid container spacing={1}>
-        <Grid container item>
-          {pythonBottleneck && (
-            <Grid item sm={12}>
-              <Card variant="outlined">
-                <CardHeader title="Python Bottleneck Analaysis" />
-                <CardContent>
+      <Card variant="outlined">
+        <CardHeader title="Python Bottleneck Analaysis" />
+        <CardContent>
+          <Grid container spacing={1}>
+            <Grid container item>
+              {pythonBottleneck && (
+                <Grid item sm={12}>
                   <CardMedia
                     component="img"
                     src={`data:image/png;base64, ${pythonBottleneck.image_content}`}
                     alt="python profiling graph"
                   />
-                </CardContent>
-              </Card>
+                </Grid>
+              )}
             </Grid>
-          )}
-        </Grid>
-      </Grid>
+          </Grid>
+          <Grid item container direction="column" spacing={1} sm={12}>
+            <Grid item>
+              <DataLoading value={pStatsGraph}>
+                {(graph) => (
+                  <AntTableChart graph={graph} sortColumn={sortColumn} />
+                )}
+              </DataLoading>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
     </div>
   )
 }

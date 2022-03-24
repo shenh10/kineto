@@ -6,6 +6,7 @@ import io as sysio
 import json
 import re
 import base64
+import pstats
 import tempfile
 from json.decoder import JSONDecodeError
 from typing import Dict, List, Optional
@@ -115,6 +116,47 @@ class RunProfileData(object):
         return None, None
 
     @staticmethod
+    def parse_pstats(path, sortby='cumtime'):
+        s = pstats.Stats(path).sort_stats(sortby)
+        width, lines = s.get_print_list([-1])
+        
+        table = {}
+        result = {
+            'metadata': {
+                'sort': 'Total Duration (us)'
+            },
+            'data': table
+        }
+        # data['metadata']['tooltips'] = sortby
+        if len(lines) > 0:
+            table['columns'] = [
+                    {'type': 'number', 'name': 'Function'},
+                    {'type': 'number', 'name': 'Number of Calls', 'tooltip': 'Total number of calls, including recursive calls'},
+                    {'type': 'number', 'name': 'Primitive Calls', 'tooltip': 'Number of primitive calls, excluding recursive calls.'},
+                    {'type': 'number', 'name': 'Self-function Total Time (s)', 'tooltip': 'Total time spent in the function, subfunction calls excepted.'},
+                    {'type': 'number', 'name': 'Time Per Call (s)'},
+                    {'type': 'number', 'name': 'Cumulative Time (s)', 'tooltip': 'Cumulative time spent in a function. including subfunction calls.'},
+                    {'type': 'number', 'name': 'Time Per Primitive Call (s)', 'tooltip': 'The ratio of cumulative time to primitive calls'},
+                    {'type': 'string', 'name': 'Filename:Line Nimber'}]
+            table['title'] = 'Python Code Execution Time (s)'
+            table['rows'] = []
+            for line in lines:
+                row = []
+                cc, nc, tt, ct, callers = s.stats[line]
+                name = pstats.func_std_string(line)
+                if name.endswith(')'):
+                    func_name = name.split('(')[1].rstrip(')')
+                    func_path = name.split('(')[0]
+                else:
+                    func_name = '<' + name[1:-1] + '>' if name.startswith('<') else name
+                    func_path = ''
+                row.extend([func_name, nc, cc, pstats.f8(tt), pstats.f8(tt/(nc)), pstats.f8(ct), pstats.f8(ct/(cc)), func_path])
+                table['rows'].append(row)
+        else:
+            table = None
+        return result
+
+    @staticmethod
     def parse(worker, span, path, cache_dir):
         trace_path, trace_json = RunProfileData._preprocess_file(path, cache_dir)
     
@@ -122,7 +164,9 @@ class RunProfileData(object):
         profile.trace_file_path = trace_path
         image_content, stats_path = RunProfileData.retreive_codebase_stats(trace_path)
         if image_content and stats_path:
+            pstats_data = RunProfileData.parse_pstats(stats_path)
             profile.codebase['python_bottleneck']['image_content'] = image_content
+            profile.codebase['python_bottleneck']['pstats'] = pstats_data
         return profile
 
     @staticmethod

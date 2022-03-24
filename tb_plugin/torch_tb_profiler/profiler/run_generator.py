@@ -30,6 +30,10 @@ class RunGenerator(object):
         profile_run.views.append(consts.OVERALL_VIEW)
         profile_run.overview = self._generate_overview()
 
+        # add codebase view right after overview is more suitable for developer's logical routine.
+        profile_run.codebase = self.profile_data.codebase
+        profile_run.views.append(consts.CODEBASE_VIEW)
+
         profile_run.views.append(consts.OP_VIEW)
         profile_run.operation_pie_by_name = self._generate_op_pie()
         profile_run.operation_table_by_name = self._generate_op_table(self.profile_data.op_list_groupby_name)
@@ -73,8 +77,6 @@ class RunGenerator(object):
         elif profile_run.module_stats:
             profile_run.views.append(consts.MODULE_VIEW)
 
-        profile_run.codebase = self.profile_data.codebase
-        profile_run.views.append(consts.CODEBASE_VIEW)
 
 
         return profile_run

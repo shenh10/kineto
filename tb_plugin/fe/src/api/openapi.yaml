@@ -980,11 +980,45 @@ components:
       type: object
       required:
         - image_content
+        - pstats
       properties:
         image_path:
           type: string
         image_content:
           type: string
+        pstats:
+          $ref: '#/components/schemas/PStatsGraph'
+    PStatsGraph:
+      type: object
+      required:
+        - data
+        - metadata
+      properties:
+        data:
+          $ref: '#/components/schemas/Graph'
+        metadata:
+          $ref: '#/components/schemas/TableMetadata'
+      # type: object
+      # required:
+      #   - ncalls
+      #   - tottime
+      #   - percall
+      #   - cumtime
+      #   - cpercall
+      #   - filename_lineno
+      # properties:
+      #   ncalls:
+      #     type: number
+      #   duration:
+      #     totaltime: number
+      #   percall:
+      #     type: number
+      #   cumtime:
+      #     type: number
+      #   cpercall:
+      #     type: number
+      #   filename_lineno:
+      #     type: string 
     MemoryStatsData:
       type: object
       required:

@@ -10,15 +10,6 @@ yarn
 npm install webpack
 npm install --global cross-env
 
-
-
+# compile swagger
 apt install -y default-jre
-wget https://repo1.maven.org/maven2/io/swagger/codegen/v3/swagger-codegen-cli/3.0.25/swagger-codegen-cli-3.0.25.jar -O swagger-codegen-cli.jar
-java -jar swagger-codegen-cli.jar generate -i ./src/api/openapi.yaml -l typescript-fetch -o ./src/api/generated/  --additional-properties modelPropertyNaming=original
-rm ./src/api/generated/api_test.spec.ts
-yarn prettier --end-of-line lf
-yarn add url
-python ./scripts/add_header.py ./src/api/generated/
-
-
-yarn build:copy
+wget -c https://repo1.maven.org/maven2/io/swagger/codegen/v3/swagger-codegen-cli/3.0.25/swagger-codegen-cli-3.0.25.jar -O swagger-codegen-cli.jar

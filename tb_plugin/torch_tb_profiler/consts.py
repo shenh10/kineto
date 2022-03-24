@@ -16,7 +16,8 @@ MONITOR_RUN_REFRESH_INTERNAL_IN_SECONDS = 10
 MAX_GPU_PER_NODE = 64
 
 View = namedtuple('View', 'id, name, display_name')
-OVERALL_VIEW = View(1, 'overall', 'Overview')
+OVERALL_VIEW = View(0, 'overall', 'Overview')
+CODEBASE_VIEW = View(1, 'codebase', 'Codebase')
 OP_VIEW = View(2, 'operator', 'Operator')
 KERNEL_VIEW = View(3, 'kernel', 'Kernel')
 TRACE_VIEW = View(4, 'trace', 'Trace')
@@ -24,7 +25,6 @@ DISTRIBUTED_VIEW = View(5, 'distributed', 'Distributed')
 MEMORY_VIEW = View(6, 'memory', 'Memory')
 MODULE_VIEW = View(7, 'module', 'Module')
 LIGHTNING_VIEW = View(8, 'lightning', 'Lightning')
-CODEBASE_VIEW = View(9, 'codebase', 'Codebase')
 
 TOOLTIP_GPU_UTIL = \
     'GPU Utilization:\n' \
