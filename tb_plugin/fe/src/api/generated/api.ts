@@ -706,6 +706,135 @@ export interface MemoryStatsTableMetadata {
 /**
  *
  * @export
+ * @interface ModelOverview
+ */
+export interface ModelOverview {
+  /**
+   *
+   * @type {string}
+   * @memberof ModelOverview
+   */
+  title: string
+  /**
+   *
+   * @type {string}
+   * @memberof ModelOverview
+   */
+  value: string
+  /**
+   *
+   * @type {string}
+   * @memberof ModelOverview
+   */
+  tooltip?: string
+}
+/**
+ *
+ * @export
+ * @interface ModelStats
+ */
+export interface ModelStats {
+  /**
+   *
+   * @type {string}
+   * @memberof ModelStats
+   */
+  name: string
+  /**
+   *
+   * @type {string}
+   * @memberof ModelStats
+   */
+  key: string
+  /**
+   *
+   * @type {string}
+   * @memberof ModelStats
+   */
+  type: string
+  /**
+   *
+   * @type {string}
+   * @memberof ModelStats
+   */
+  params?: string
+  /**
+   *
+   * @type {number}
+   * @memberof ModelStats
+   */
+  params_percentage?: number
+  /**
+   *
+   * @type {string}
+   * @memberof ModelStats
+   */
+  macs?: string
+  /**
+   *
+   * @type {number}
+   * @memberof ModelStats
+   */
+  macs_percentage?: number
+  /**
+   *
+   * @type {number}
+   * @memberof ModelStats
+   */
+  flops?: number
+  /**
+   *
+   * @type {number}
+   * @memberof ModelStats
+   */
+  duration?: number
+  /**
+   *
+   * @type {number}
+   * @memberof ModelStats
+   */
+  latency_percentage?: number
+  /**
+   *
+   * @type {string}
+   * @memberof ModelStats
+   */
+  extra_repr?: string
+  /**
+   *
+   * @type {Array<ModelStats>}
+   * @memberof ModelStats
+   */
+  children: Array<ModelStats>
+}
+/**
+ *
+ * @export
+ * @interface ModelViewData
+ */
+export interface ModelViewData {
+  /**
+   *
+   * @type {Array<ModelOverview>}
+   * @memberof ModelViewData
+   */
+  overview: Array<ModelOverview>
+  /**
+   *
+   * @type {Array<KeyedColumn>}
+   * @memberof ModelViewData
+   */
+  columns: Array<KeyedColumn>
+  /**
+   *
+   * @type {Array<ModelStats>}
+   * @memberof ModelViewData
+   */
+  data: Array<ModelStats>
+}
+/**
+ *
+ * @export
  * @interface ModuleStats
  */
 export interface ModuleStats {
@@ -1067,6 +1196,12 @@ export interface Overview {
 export interface PStatsGraph {
   /**
    *
+   * @type {Array<PStatsOverview>}
+   * @memberof PStatsGraph
+   */
+  overview: Array<PStatsOverview>
+  /**
+   *
    * @type {Graph}
    * @memberof PStatsGraph
    */
@@ -1077,6 +1212,31 @@ export interface PStatsGraph {
    * @memberof PStatsGraph
    */
   metadata: TableMetadata
+}
+/**
+ *
+ * @export
+ * @interface PStatsOverview
+ */
+export interface PStatsOverview {
+  /**
+   *
+   * @type {string}
+   * @memberof PStatsOverview
+   */
+  title: string
+  /**
+   *
+   * @type {string}
+   * @memberof PStatsOverview
+   */
+  value: string
+  /**
+   *
+   * @type {string}
+   * @memberof PStatsOverview
+   */
+  tooltip?: string
 }
 /**
  *
@@ -2168,6 +2328,78 @@ export const DefaultApiFetchParamCreator = function (
 
       if (end_ts !== undefined) {
         localVarQueryParameter['end_ts'] = end_ts
+      }
+
+      localVarUrlObj.query = Object.assign(
+        {},
+        localVarUrlObj.query,
+        localVarQueryParameter,
+        options.query
+      )
+      // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+      delete localVarUrlObj.search
+      localVarRequestOptions.headers = Object.assign(
+        {},
+        localVarHeaderParameter,
+        options.headers
+      )
+
+      return {
+        url: url.format(localVarUrlObj),
+        options: localVarRequestOptions
+      }
+    },
+    /**
+     *
+     * @param {string} run
+     * @param {string} worker
+     * @param {string} span
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    modelGet(
+      run: string,
+      worker: string,
+      span: string,
+      options: any = {}
+    ): FetchArgs {
+      // verify required parameter 'run' is not null or undefined
+      if (run === null || run === undefined) {
+        throw new RequiredError(
+          'run',
+          'Required parameter run was null or undefined when calling modelGet.'
+        )
+      }
+      // verify required parameter 'worker' is not null or undefined
+      if (worker === null || worker === undefined) {
+        throw new RequiredError(
+          'worker',
+          'Required parameter worker was null or undefined when calling modelGet.'
+        )
+      }
+      // verify required parameter 'span' is not null or undefined
+      if (span === null || span === undefined) {
+        throw new RequiredError(
+          'span',
+          'Required parameter span was null or undefined when calling modelGet.'
+        )
+      }
+      const localVarPath = `/model`
+      const localVarUrlObj = url.parse(localVarPath, true)
+      const localVarRequestOptions = Object.assign({ method: 'GET' }, options)
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
+
+      if (run !== undefined) {
+        localVarQueryParameter['run'] = run
+      }
+
+      if (worker !== undefined) {
+        localVarQueryParameter['worker'] = worker
+      }
+
+      if (span !== undefined) {
+        localVarQueryParameter['span'] = span
       }
 
       localVarUrlObj.query = Object.assign(
@@ -3377,6 +3609,39 @@ export const DefaultApiFp = function (configuration?: Configuration) {
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
+    modelGet(
+      run: string,
+      worker: string,
+      span: string,
+      options?: any
+    ): (fetch?: FetchAPI, basePath?: string) => Promise<ModelViewData> {
+      const localVarFetchArgs = DefaultApiFetchParamCreator(
+        configuration
+      ).modelGet(run, worker, span, options)
+      return (
+        fetch: FetchAPI = portableFetch,
+        basePath: string = BASE_PATH
+      ) => {
+        return fetch(
+          basePath + localVarFetchArgs.url,
+          localVarFetchArgs.options
+        ).then((response) => {
+          if (response.status >= 200 && response.status < 300) {
+            return response.json()
+          } else {
+            throw response
+          }
+        })
+      }
+    },
+    /**
+     *
+     * @param {string} run
+     * @param {string} worker
+     * @param {string} span
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
     moduleGet(
       run: string,
       worker: string,
@@ -4023,6 +4288,22 @@ export const DefaultApiFactory = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
+    modelGet(run: string, worker: string, span: string, options?: any) {
+      return DefaultApiFp(configuration).modelGet(
+        run,
+        worker,
+        span,
+        options
+      )(fetch, basePath)
+    },
+    /**
+     *
+     * @param {string} run
+     * @param {string} worker
+     * @param {string} span
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
     moduleGet(run: string, worker: string, span: string, options?: any) {
       return DefaultApiFp(configuration).moduleGet(
         run,
@@ -4509,6 +4790,24 @@ export class DefaultApi extends BaseAPI {
       span,
       start_ts,
       end_ts,
+      options
+    )(this.fetch, this.basePath)
+  }
+
+  /**
+   *
+   * @param {string} run
+   * @param {string} worker
+   * @param {string} span
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof DefaultApi
+   */
+  public modelGet(run: string, worker: string, span: string, options?: any) {
+    return DefaultApiFp(this.configuration).modelGet(
+      run,
+      worker,
+      span,
       options
     )(this.fetch, this.basePath)
   }

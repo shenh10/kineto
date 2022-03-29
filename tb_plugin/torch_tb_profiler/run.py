@@ -8,6 +8,7 @@ from . import consts, utils
 from .profiler.diffrun import compare_op_tree, diff_summary
 from .profiler.memory_parser import MemoryMetrics, MemoryRecord, MemorySnapshot
 from .profiler.module_op import Stats
+from .profiler.model import ModelStats
 from .profiler.node import OperatorNode
 from .utils import Canonicalizer, DisplayRounder
 
@@ -127,6 +128,8 @@ class RunProfile(object):
         self.memory_snapshot: Optional[MemorySnapshot] = None
         self.tid2tree: Dict[int, OperatorNode] = None
         self.pl_tid2tree: Dict[int, OperatorNode] = None
+
+        self.model_stats: Optional[List(ModelStats)] = None
 
         self.module_stats: Optional[List(Stats)] = None
         self.pl_module_stats: Optional[List(Stats)] = None

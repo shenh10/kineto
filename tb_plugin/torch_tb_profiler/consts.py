@@ -25,6 +25,7 @@ DISTRIBUTED_VIEW = View(5, 'distributed', 'Distributed')
 MEMORY_VIEW = View(6, 'memory', 'Memory')
 MODULE_VIEW = View(7, 'module', 'Module')
 LIGHTNING_VIEW = View(8, 'lightning', 'Lightning')
+MODEL_VIEW = View(9, 'model', 'Model')
 
 TOOLTIP_GPU_UTIL = \
     'GPU Utilization:\n' \

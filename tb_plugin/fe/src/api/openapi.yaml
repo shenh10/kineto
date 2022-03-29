@@ -610,6 +610,31 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ModuleViewData'
+  /model:
+    get:
+      parameters:
+        - in: query
+          name: run
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: worker
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: span
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ModelViewData'
   /tree:
     get:
       parameters:
@@ -711,6 +736,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Performance'
+    PStatsOverview:
+      type: object
+      required:
+        - title
+        - value
+      properties:
+        title:
+          type: string
+        value:
+          type: string
+        tooltip:
+          type: string
     Environment:
       type: object
       required:
@@ -991,9 +1028,14 @@ components:
     PStatsGraph:
       type: object
       required:
+        - overview
         - data
         - metadata
       properties:
+        overview:
+          type: array
+          items:
+            $ref: '#/components/schemas/PStatsOverview'
         data:
           $ref: '#/components/schemas/Graph'
         metadata:
@@ -1192,6 +1234,71 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ModuleStats'
+    ModelViewData:
+      type: object
+      required:
+        - columns
+        - data
+        - overview
+      properties:
+        overview:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModelOverview'
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyedColumn'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModelStats'
+    ModelOverview:
+      type: object
+      required:
+        - title
+        - value
+      properties:
+        title:
+          type: string
+        value:
+          type: string
+        tooltip:
+          type: string
+    ModelStats:
+      type: object
+      required:
+        - name
+        - key
+        - type
+        - children
+      properties:
+        name:
+          type: string
+        key:
+          type: string
+        type:
+          type: string
+        params:
+          type: string
+        params_percentage:
+          type: number
+        macs:
+          type: string
+        macs_percentage:
+          type: number
+        flops:
+          type: number
+        duration:
+          type: number
+        latency_percentage:
+          type: number
+        extra_repr:
+          type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModelStats'
     OperatorNode:
       type: object
       required:

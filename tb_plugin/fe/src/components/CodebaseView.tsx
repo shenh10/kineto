@@ -12,6 +12,7 @@ import * as React from 'react'
 import * as api from '../api'
 import { AntTableChart } from './charts/AntTableChart'
 import { DataLoading } from './DataLoading'
+import { TextListItem } from './TextListItem'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,6 +35,9 @@ export const CodebaseView: React.FC<IProps> = (props) => {
     undefined
   )
   const [sortColumn, setSortColumn] = React.useState('')
+  const [pStatsOverViews, setPStatsOverViews] = React.useState<
+    api.PStatsOverview[]
+  >([])
 
   React.useEffect(() => {
     api.defaultApi.codebaseGet(run, worker, span).then((resp) => {
@@ -46,6 +50,7 @@ export const CodebaseView: React.FC<IProps> = (props) => {
     if (pythonBottleneck) {
       setPStatsGraph(pythonBottleneck.pstats.data)
       setSortColumn(pythonBottleneck.pstats.metadata.sort)
+      setPStatsOverViews(pythonBottleneck.pstats.overview)
     }
   }, [pythonBottleneck])
 
@@ -64,6 +69,23 @@ export const CodebaseView: React.FC<IProps> = (props) => {
                     alt="python profiling graph"
                   />
                 </Grid>
+              )}
+            </Grid>
+          </Grid>
+          <Grid container item spacing={1}>
+            <Grid item sm={12}>
+              {React.useMemo(
+                () => (
+                  <Card variant="outlined">
+                    <CardHeader title="Summary" />
+                    <CardContent>
+                      {pStatsOverViews.map((item) => (
+                        <TextListItem name={item.title} value={item.value} />
+                      ))}
+                    </CardContent>
+                  </Card>
+                ),
+                [pStatsOverViews]
               )}
             </Grid>
           </Grid>

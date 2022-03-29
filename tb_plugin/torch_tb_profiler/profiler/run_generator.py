@@ -51,7 +51,7 @@ class RunGenerator(object):
             profile_run.tc_pie = self._generate_tc_pie()
 
         profile_run.views.append(consts.TRACE_VIEW)
-        profile_run.trace_file_path = self.profile_data.trace_file_path
+        # profile_run.trace_file_path = self.profile_data.trace_file_path
 
         profile_run.gpu_metrics = self.profile_data.gpu_metrics_parser.get_gpu_metrics()
 
@@ -77,8 +77,9 @@ class RunGenerator(object):
         elif profile_run.module_stats:
             profile_run.views.append(consts.MODULE_VIEW)
 
-
-
+        profile_run.model_stats = self.profile_data.model_stats
+        if profile_run.model_stats:
+            profile_run.views.append(consts.MODEL_VIEW)
         return profile_run
 
     def _generate_overview(self):

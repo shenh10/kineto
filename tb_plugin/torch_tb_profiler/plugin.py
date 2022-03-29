@@ -99,6 +99,7 @@ class TorchProfilerPlugin(base_plugin.TBPlugin):
             '/spans': self.spans_route,
             '/overview': self.overview_route,
             '/codebase': self.codebase_route,
+            '/model': self.model_route,
             '/operation': self.operation_pie_route,
             '/operation/table': self.operation_table_route,
             '/operation/stack': self.operation_stack_route,
@@ -330,6 +331,19 @@ class TorchProfilerPlugin(base_plugin.TBPlugin):
     def module_route(self, request: werkzeug.Request):
         profile = self._get_profile_for_request(request)
         content = profile.get_module_view()
+        if content:
+            return self.respond_as_json(content, True)
+        else:
+            name = request.args.get('run')
+            worker = request.args.get('worker')
+            span = request.args.get('span')
+            raise exceptions.NotFound('could not find the run for %s/%s/%s' % (name, worker, span))
+
+
+    @wrappers.Request.application
+    def model_route(self, request: werkzeug.Request):
+        profile = self._get_profile_for_request(request)
+        content = profile.model_stats
         if content:
             return self.respond_as_json(content, True)
         else:

@@ -9,7 +9,7 @@ import base64
 import pstats
 import tempfile
 from json.decoder import JSONDecodeError
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from .. import io, utils
 from ..utils import href
 from . import trace
@@ -23,6 +23,7 @@ from .op_agg import ModuleAggregator
 from .overall_parser import OverallParser
 from .tensor_cores_parser import TensorCoresParser
 from .trace import BaseEvent, EventTypes, MemoryEvent
+from .model import ModelStats, parse_model_stats
 
 logger = utils.get_logger()
 
@@ -54,8 +55,6 @@ class RunProfileData(object):
 
         self.events.sort(key=lambda e: e.ts)
         self.forward_backward_events = trace.create_association_events(fwd_bwd_events)
-
-        self.trace_file_path: str = None
 
         # Event Parser results
         self.tid2tree: Dict[int, OperatorNode] = None
@@ -99,6 +98,7 @@ class RunProfileData(object):
 
         # codebase
         self.codebase: Dict[str, Dict[str, str]] = {'python_bottleneck': {}}
+        self.model_stats: List[ModelStats] = []
 
     @staticmethod
     def retreive_codebase_stats(path):
@@ -116,16 +116,29 @@ class RunProfileData(object):
         return None, None
 
     @staticmethod
+    def retreive_model_stats(path):
+        dirname, basename = io.dirname(path), io.basename(path)
+        dirname = io.join(dirname, '../')
+        basename = basename.rstrip('.pt.trace.json')
+        model_stats_path = io.join(dirname, basename + '.json')
+        if io.exists(model_stats_path):
+            return model_stats_path
+        logger.warning(f"No codebase profiling data exists.  Expected path: {image_path}")
+        return None
+
+    @staticmethod
     def parse_pstats(path, sortby='cumtime'):
         s = pstats.Stats(path).sort_stats(sortby)
         width, lines = s.get_print_list([-1])
         
         table = {}
+        overviews = []
         result = {
             'metadata': {
                 'sort': 'Total Duration (us)'
             },
-            'data': table
+            'data': table,
+            'overview': overviews
         }
         # data['metadata']['tooltips'] = sortby
         if len(lines) > 0:
@@ -154,6 +167,12 @@ class RunProfileData(object):
                 table['rows'].append(row)
         else:
             table = None
+
+    
+        overviews.append({'title': 'Total Calls', 'value': s.total_calls})
+        overviews.append({'title': 'Total Primitive Calls', 'value': s.prim_calls})
+        overviews.append({'title': 'Total Time (s)', 'value': pstats.f8(s.total_tt)})
+        
         return result
 
     @staticmethod
@@ -161,13 +180,52 @@ class RunProfileData(object):
         trace_path, trace_json = RunProfileData._preprocess_file(path, cache_dir)
     
         profile = RunProfileData.from_json(worker, span, trace_json)
-        profile.trace_file_path = trace_path
+
         image_content, stats_path = RunProfileData.retreive_codebase_stats(trace_path)
         if image_content and stats_path:
             pstats_data = RunProfileData.parse_pstats(stats_path)
             profile.codebase['python_bottleneck']['image_content'] = image_content
             profile.codebase['python_bottleneck']['pstats'] = pstats_data
+        
+        model_stats_path = RunProfileData.retreive_model_stats(trace_path)
+        if model_stats_path:
+            model_stats_data = RunProfileData.parse_model_stats_impl(model_stats_path)
+            profile.model_stats = model_stats_data
         return profile
+
+    @staticmethod
+    def parse_model_stats_impl(path, sortby='cumtime'):
+        dict_ = {}
+        with open(path, 'r') as fid:
+            dict_ = json.load(fid)
+        overview, model_stats = parse_model_stats(dict_)
+        result = {
+            'overview': overview,
+            'columns': [
+                {'name': 'Module Name', 'type': 'string', 'key': 'name'},
+                {'name': 'Class Name', 'type': 'string', 'key': 'type'},
+                {'name': 'Params', 'type': 'string', 'key': 'params'},
+                {'name': 'Params Percentage', 'type': 'number', 'key': 'params_percentage'},
+                {'name': 'Macs', 'type': 'number', 'key': 'macs'},
+                {'name': 'Macs Percentage', 'type': 'number', 'key': 'macs_percentage'},
+                {'name': 'FLOPS', 'type': 'number', 'key': 'flops'},
+                {'name': 'Duration', 'type': 'number', 'key': 'duration'},
+                {'name': 'Latency Percentage', 'type': 'number', 'key': 'latency_percentage'},
+                {'name': 'Extra Info', 'type': 'string', 'key': 'extra_repr'}
+            ],
+            'data': []
+        }
+
+        def process_modules_stats(parent: List[Any], model_stats: List[ModelStats]):
+            for stats in model_stats:
+                d = stats._asdict()
+                d['children'] = []
+                parent.append(d)
+                process_modules_stats(d['children'], stats.children)
+
+        process_modules_stats(result['data'], model_stats)
+        return result
+
 
     @staticmethod
     def from_json(worker, span, trace_json: Dict):
