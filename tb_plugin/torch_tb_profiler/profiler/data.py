@@ -24,6 +24,7 @@ from .overall_parser import OverallParser
 from .tensor_cores_parser import TensorCoresParser
 from .trace import BaseEvent, EventTypes, MemoryEvent
 from .model import ModelStats, parse_model_stats
+from .pstats_tree import gen_pstats_tree, PStatsFrame
 
 logger = utils.get_logger()
 
@@ -56,6 +57,8 @@ class RunProfileData(object):
         self.events.sort(key=lambda e: e.ts)
         self.forward_backward_events = trace.create_association_events(fwd_bwd_events)
 
+        self.trace_file_path: str = None
+        
         # Event Parser results
         self.tid2tree: Dict[int, OperatorNode] = None
         self.pl_tid2tree: Dict[int, OperatorNode] = None
@@ -130,7 +133,7 @@ class RunProfileData(object):
     def parse_pstats(path, sortby='cumtime'):
         s = pstats.Stats(path).sort_stats(sortby)
         width, lines = s.get_print_list([-1])
-        
+        columns, tree_data = gen_pstats_tree(s)
         table = {}
         overviews = []
         result = {
@@ -138,7 +141,9 @@ class RunProfileData(object):
                 'sort': 'Total Duration (us)'
             },
             'data': table,
-            'overview': overviews
+            'overview': overviews,
+            'columns': columns,
+            'tree': []
         }
         # data['metadata']['tooltips'] = sortby
         if len(lines) > 0:
@@ -149,8 +154,9 @@ class RunProfileData(object):
                     {'type': 'number', 'name': 'Self-function Total Time (s)', 'tooltip': 'Total time spent in the function, subfunction calls excepted.'},
                     {'type': 'number', 'name': 'Time Per Call (s)'},
                     {'type': 'number', 'name': 'Cumulative Time (s)', 'tooltip': 'Cumulative time spent in a function. including subfunction calls.'},
+                    {'type': 'string', 'name': 'Cumulative Time Percentage','tooltip': 'Ratio of cumulative time to total execution time.'},
                     {'type': 'number', 'name': 'Time Per Primitive Call (s)', 'tooltip': 'The ratio of cumulative time to primitive calls'},
-                    {'type': 'string', 'name': 'Filename:Line Nimber'}]
+                    {'type': 'string', 'name': 'Filename:Line Number'}]
             table['title'] = 'Python Code Execution Time (s)'
             table['rows'] = []
             for line in lines:
@@ -163,7 +169,8 @@ class RunProfileData(object):
                 else:
                     func_name = '<' + name[1:-1] + '>' if name.startswith('<') else name
                     func_path = ''
-                row.extend([func_name, nc, cc, pstats.f8(tt), pstats.f8(tt/(nc)), pstats.f8(ct), pstats.f8(ct/(cc)), func_path])
+                row.extend([func_name, nc, cc, pstats.f8(tt), pstats.f8(tt/(nc)), pstats.f8(ct),
+                        "{:.2f} %".format(ct/s.total_tt), pstats.f8(ct/(cc)), func_path])
                 table['rows'].append(row)
         else:
             table = None
@@ -173,13 +180,26 @@ class RunProfileData(object):
         overviews.append({'title': 'Total Primitive Calls', 'value': s.prim_calls})
         overviews.append({'title': 'Total Time (s)', 'value': pstats.f8(s.total_tt)})
         
+        def process_tree_stats(parent: List[Any], tree_stats: List[PStatsFrame]):
+            for stats in tree_stats:
+                d = stats._asdict()
+                d['children'] = []
+                parent.append(d)
+                process_tree_stats(d['children'], stats.children)
+
+        process_tree_stats(result['tree'], tree_data)
+
         return result
+
+
+
 
     @staticmethod
     def parse(worker, span, path, cache_dir):
         trace_path, trace_json = RunProfileData._preprocess_file(path, cache_dir)
     
         profile = RunProfileData.from_json(worker, span, trace_json)
+        profile.trace_file_path = trace_path
 
         image_content, stats_path = RunProfileData.retreive_codebase_stats(trace_path)
         if image_content and stats_path:
@@ -213,7 +233,7 @@ class RunProfileData(object):
                 {'name': 'Latency Percentage', 'type': 'number', 'key': 'latency_percentage'},
                 {'name': 'Extra Info', 'type': 'string', 'key': 'extra_repr'}
             ],
-            'data': []
+            'data': [],
         }
 
         def process_modules_stats(parent: List[Any], model_stats: List[ModelStats]):

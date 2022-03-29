@@ -1031,6 +1031,8 @@ components:
         - overview
         - data
         - metadata
+        - tree
+        - columns
       properties:
         overview:
           type: array
@@ -1040,6 +1042,14 @@ components:
           $ref: '#/components/schemas/Graph'
         metadata:
           $ref: '#/components/schemas/TableMetadata'
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyedColumn'
+        tree:
+          type: array
+          items:
+            $ref: '#/components/schemas/PStatsTree'
       # type: object
       # required:
       #   - ncalls
@@ -1299,6 +1309,35 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ModelStats'
+    PStatsTree:
+      type: object
+      required:
+        - func_name
+        - filepath
+        - children
+      properties:
+        func_name:
+          type: string
+        filepath:
+          type: string
+        nc:
+          type: number
+        cc:
+          type: number
+        tt:
+          type: number
+        time_per_call:
+          type: number
+        ct:
+          type: number
+        ct_ratio:
+          type: string
+        time_per_prim_call:
+          type: number
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/PStatsTree'
     OperatorNode:
       type: object
       required:

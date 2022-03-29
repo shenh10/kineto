@@ -13,10 +13,20 @@ import * as api from '../api'
 import { AntTableChart } from './charts/AntTableChart'
 import { DataLoading } from './DataLoading'
 import { TextListItem } from './TextListItem'
+import { Table } from 'antd'
+import TextField, {
+  StandardTextFieldProps,
+  TextFieldProps
+} from '@material-ui/core/TextField'
+import { useSearch } from '../utils/search'
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1
+  },
+  inputWidthOverflow: {
+    minWidth: '15em',
+    whiteSpace: 'nowrap'
   }
 }))
 
@@ -26,6 +36,38 @@ export interface IProps {
   span: string
 }
 
+const getKeyedTableColumns = (columns: api.KeyedColumn[]) => {
+  return columns.map((col) => {
+    return {
+      dataIndex: col.key,
+      key: col.key,
+      title: col.name
+    }
+  })
+}
+
+const getTableRows = (key: number, rows: api.PStatsTree[]) => {
+  return rows.map((row) => {
+    const data: any = {
+      key: key++,
+      filepath: row.filepath,
+      func_name: row.func_name,
+      nc: row.nc,
+      cc: row.cc,
+      tt: row.tt,
+      ct: row.ct,
+      time_per_call: row.time_per_call,
+      ct_ratio: row.ct_ratio,
+      time_per_prim_call: row.time_per_prim_call
+    }
+
+    if (row.children.length) {
+      data.children = getTableRows(key, row.children)
+    }
+
+    return data
+  })
+}
 export const CodebaseView: React.FC<IProps> = (props) => {
   const { run, worker, span } = props
   const [pythonBottleneck, setPythonBottleneck] = React.useState<
@@ -38,6 +80,15 @@ export const CodebaseView: React.FC<IProps> = (props) => {
   const [pStatsOverViews, setPStatsOverViews] = React.useState<
     api.PStatsOverview[]
   >([])
+  const [rows, setRows] = React.useState<any[]>([])
+  const [columns, setColumns] = React.useState<any[]>([])
+  const [searchFuncName, setSearchFuncName] = React.useState('')
+
+  const [searchedFuncTable] = useSearch(searchFuncName, 'Function', pStatsGraph)
+
+  const onSearchFuncChanged: TextFieldProps['onChange'] = (event) => {
+    setSearchFuncName(event.target.value as string)
+  }
 
   React.useEffect(() => {
     api.defaultApi.codebaseGet(run, worker, span).then((resp) => {
@@ -51,6 +102,8 @@ export const CodebaseView: React.FC<IProps> = (props) => {
       setPStatsGraph(pythonBottleneck.pstats.data)
       setSortColumn(pythonBottleneck.pstats.metadata.sort)
       setPStatsOverViews(pythonBottleneck.pstats.overview)
+      setColumns(getKeyedTableColumns(pythonBottleneck.pstats.columns))
+      setRows(getTableRows(0, pythonBottleneck.pstats.tree))
     }
   }, [pythonBottleneck])
 
@@ -89,9 +142,35 @@ export const CodebaseView: React.FC<IProps> = (props) => {
               )}
             </Grid>
           </Grid>
+          <Grid item sm={12}>
+            {rows && rows.length > 0 && (
+              <Table
+                size="small"
+                bordered
+                columns={columns}
+                dataSource={rows}
+                expandable={{
+                  defaultExpandAllRows: false
+                }}
+              />
+            )}
+          </Grid>
+          <Grid item container direction="column" spacing={1}>
+            <Grid container justify="space-around">
+              <Grid item>
+                <TextField
+                  classes={{ root: classes.inputWidthOverflow }}
+                  value={searchFuncName}
+                  onChange={onSearchFuncChanged}
+                  type="search"
+                  label="Search by Name"
+                />
+              </Grid>
+            </Grid>
+          </Grid>
           <Grid item container direction="column" spacing={1} sm={12}>
             <Grid item>
-              <DataLoading value={pStatsGraph}>
+              <DataLoading value={searchedFuncTable}>
                 {(graph) => (
                   <AntTableChart graph={graph} sortColumn={sortColumn} />
                 )}

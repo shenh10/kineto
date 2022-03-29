@@ -1212,6 +1212,18 @@ export interface PStatsGraph {
    * @memberof PStatsGraph
    */
   metadata: TableMetadata
+  /**
+   *
+   * @type {Array<KeyedColumn>}
+   * @memberof PStatsGraph
+   */
+  columns: Array<KeyedColumn>
+  /**
+   *
+   * @type {Array<PStatsTree>}
+   * @memberof PStatsGraph
+   */
+  tree: Array<PStatsTree>
 }
 /**
  *
@@ -1237,6 +1249,73 @@ export interface PStatsOverview {
    * @memberof PStatsOverview
    */
   tooltip?: string
+}
+/**
+ *
+ * @export
+ * @interface PStatsTree
+ */
+export interface PStatsTree {
+  /**
+   *
+   * @type {string}
+   * @memberof PStatsTree
+   */
+  func_name: string
+  /**
+   *
+   * @type {string}
+   * @memberof PStatsTree
+   */
+  filepath: string
+  /**
+   *
+   * @type {number}
+   * @memberof PStatsTree
+   */
+  nc?: number
+  /**
+   *
+   * @type {number}
+   * @memberof PStatsTree
+   */
+  cc?: number
+  /**
+   *
+   * @type {number}
+   * @memberof PStatsTree
+   */
+  tt?: number
+  /**
+   *
+   * @type {number}
+   * @memberof PStatsTree
+   */
+  time_per_call?: number
+  /**
+   *
+   * @type {number}
+   * @memberof PStatsTree
+   */
+  ct?: number
+  /**
+   *
+   * @type {string}
+   * @memberof PStatsTree
+   */
+  ct_ratio?: string
+  /**
+   *
+   * @type {number}
+   * @memberof PStatsTree
+   */
+  time_per_prim_call?: number
+  /**
+   *
+   * @type {Array<PStatsTree>}
+   * @memberof PStatsTree
+   */
+  children: Array<PStatsTree>
 }
 /**
  *

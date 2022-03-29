@@ -30,11 +30,12 @@ ModelStats = namedtuple('Stats', [
 def parse_model_stats(json_dict: Dict[str, Any]):
     detail = []
     overviews = []
+    overviews.append({'title': 'Monitor Iteration', 'value': json_dict[PARAMS_CUR_RANK]})
     overviews.append({'title': 'Total Number of Params Current Rank', 'value': json_dict[PARAMS_CUR_RANK]})
-    overviews.append({'title': 'Total Number of MACs Current Rank', 'value': json_dict[NUM_FORWARD_MACS_CUR_RANK]})
-    overviews.append({'title': 'Total Number of FLOPs Current Rank', 'value': json_dict[NUM_FORWARD_FLOPS_CUR_RANK]})
-    overviews.append({'title': 'Total FLOPs Per Second Current Rank', 'value': json_dict[FORWARD_FLOPS_CUR_RANK]})
-    overviews.append({'title': 'Total Latency', 'value': json_dict[FORWARD_LATENCY]})
+    overviews.append({'title': 'Total Number of Forward MACs Current Rank', 'value': json_dict[NUM_FORWARD_MACS_CUR_RANK]})
+    overviews.append({'title': 'Total Number of Forward FLOPs Current Rank', 'value': json_dict[NUM_FORWARD_FLOPS_CUR_RANK]})
+    overviews.append({'title': 'Total Forward FLOPs Per Second Current Rank', 'value': json_dict[FORWARD_FLOPS_CUR_RANK]})
+    overviews.append({'title': 'Total Forward Latency', 'value': json_dict[FORWARD_LATENCY]})
 
     
     if LAYER_DETAILS in json_dict:
