@@ -1312,10 +1312,13 @@ components:
     PStatsTree:
       type: object
       required:
+        - key
         - func_name
         - filepath
         - children
       properties:
+        key:
+          type: string
         func_name:
           type: string
         filepath:

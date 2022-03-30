@@ -1261,6 +1261,12 @@ export interface PStatsTree {
    * @type {string}
    * @memberof PStatsTree
    */
+  key: string
+  /**
+   *
+   * @type {string}
+   * @memberof PStatsTree
+   */
   func_name: string
   /**
    *

@@ -126,7 +126,7 @@ class RunProfileData(object):
         model_stats_path = io.join(dirname, basename + '.json')
         if io.exists(model_stats_path):
             return model_stats_path
-        logger.warning(f"No codebase profiling data exists.  Expected path: {image_path}")
+        logger.warning(f"No model profiling data exists.  Expected path: {model_stats_path}")
         return None
 
     @staticmethod

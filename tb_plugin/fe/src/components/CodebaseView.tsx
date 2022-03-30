@@ -27,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
   inputWidthOverflow: {
     minWidth: '15em',
     whiteSpace: 'nowrap'
+  },
+  hide: {
+    display: 'none'
   }
 }))
 
@@ -46,10 +49,10 @@ const getKeyedTableColumns = (columns: api.KeyedColumn[]) => {
   })
 }
 
-const getTableRows = (key: number, rows: api.PStatsTree[]) => {
+const getTableRows = (rows: api.PStatsTree[]) => {
   return rows.map((row) => {
     const data: any = {
-      key: key++,
+      key: row.key,
       filepath: row.filepath,
       func_name: row.func_name,
       nc: row.nc,
@@ -62,7 +65,7 @@ const getTableRows = (key: number, rows: api.PStatsTree[]) => {
     }
 
     if (row.children.length) {
-      data.children = getTableRows(key, row.children)
+      data.children = getTableRows(row.children)
     }
 
     return data
@@ -103,7 +106,7 @@ export const CodebaseView: React.FC<IProps> = (props) => {
       setSortColumn(pythonBottleneck.pstats.metadata.sort)
       setPStatsOverViews(pythonBottleneck.pstats.overview)
       setColumns(getKeyedTableColumns(pythonBottleneck.pstats.columns))
-      setRows(getTableRows(0, pythonBottleneck.pstats.tree))
+      setRows(getTableRows(pythonBottleneck.pstats.tree))
     }
   }, [pythonBottleneck])
 
@@ -163,7 +166,7 @@ export const CodebaseView: React.FC<IProps> = (props) => {
                   value={searchFuncName}
                   onChange={onSearchFuncChanged}
                   type="search"
-                  label="Search by Name"
+                  label="Search by Function"
                 />
               </Grid>
             </Grid>
