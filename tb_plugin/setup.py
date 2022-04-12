@@ -63,14 +63,14 @@ class build_fe(setuptools.Command):
 
 
 setuptools.setup(
-    name="torch_tb_profiler",
+    name="kai_tb_profiler",
     version=get_version(os.path.join('torch_tb_profiler', '__init__.py')),
-    description="PyTorch Profiler TensorBoard Plugin",
-    long_description="PyTorch Profiler TensorBoard Plugin : \
-        https://github.com/pytorch/kineto/tree/main/tb_plugin",
-    url="https://github.com/pytorch/kineto/tree/main/tb_plugin",
-    author="PyTorch Team",
-    author_email="packages@pytorch.org",
+    description="Kwaishou Internal PyTorch Profiler TensorBoard Plugin",
+    long_description="Kwaishou Internal PyTorch Profiler TensorBoard Plugin : \
+        https://git.corp.kuaishou.com/aiplatform/dense-train/kineto/dev/tb_plugin",
+    url="https://git.corp.kuaishou.com/aiplatform/dense-train/kineto/dev/tb_plugin",
+    author="PyTorch Team and shenhan03@kuaishou.com",
+    author_email="shenhan03@kuaishou.com",
     cmdclass={
         "build_fe": build_fe
     },
@@ -80,7 +80,7 @@ setuptools.setup(
     },
     entry_points={
         "tensorboard_plugins": [
-            "torch_profiler = torch_tb_profiler.plugin:TorchProfilerPlugin",
+            "kwai_tb_profiler = torch_tb_profiler.plugin:TorchProfilerPlugin",
         ],
     },
     python_requires=">=3.6.2",
@@ -100,6 +100,6 @@ setuptools.setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     license='BSD-3',
-    keywords='pytorch tensorboard profile plugin',
+    keywords='kwaishou internal pytorch tensorboard profile plugin',
     extras_require=EXTRAS
 )

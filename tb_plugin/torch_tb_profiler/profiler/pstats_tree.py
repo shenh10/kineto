@@ -35,7 +35,11 @@ def gen_pstats_tree(stats, topk=15) -> List[PStatsFrame]:
                     node_id_book[func2] = str(key)
                     key += 1
                 all_callees[func2][func]  = caller
-            if len(callers) == 0 and root_func is None:
+            """
+            We have to hard code a `wrapper` identifier of ktrain-tool to
+                avoid finding an unexpected root function.
+            """
+            if len(callers) == 0 and 'wrapper' == func[2] and root_func is None:
                 root_func = func
         return root_func
     path_id_book = {}
@@ -99,8 +103,10 @@ def gen_pstats_tree(stats, topk=15) -> List[PStatsFrame]:
         {'name': 'Time Per Primitive Call (s)', 'type': 'string', 'key': 'time_per_prim_call'},
     ]
     root_func = calc_callees(stats)
+    print("root function is ", root_func)
     if root_func is None:
-        return []
+        print("root_func is not found")
+        return columns, []
     result = {}
     cur_path = [node_id_book[root_func]]
     data = sorted(list(traverse(stats.all_callees, root_func, cur_path)), key=lambda x: x.ct, reverse=True)

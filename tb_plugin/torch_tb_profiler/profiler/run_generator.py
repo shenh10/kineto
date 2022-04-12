@@ -27,21 +27,23 @@ class RunGenerator(object):
         profile_run.has_communication = self.profile_data.has_communication
         profile_run.has_memcpy_or_memset = self.profile_data.has_memcpy_or_memset
         profile_run.profiler_start_ts = self.profile_data.profiler_start_ts
-        profile_run.views.append(consts.OVERALL_VIEW)
+        if self.profile_data.events:
+            profile_run.views.append(consts.OVERALL_VIEW)
         profile_run.overview = self._generate_overview()
 
         # add codebase view right after overview is more suitable for developer's logical routine.
         profile_run.codebase = self.profile_data.codebase
         profile_run.views.append(consts.CODEBASE_VIEW)
 
-        profile_run.views.append(consts.OP_VIEW)
-        profile_run.operation_pie_by_name = self._generate_op_pie()
-        profile_run.operation_table_by_name = self._generate_op_table(self.profile_data.op_list_groupby_name)
-        profile_run.operation_stack_by_name = self._generate_op_table_for_stack(False)
-        profile_run.operation_pie_by_name_input = self._generate_op_pie(True)
-        profile_run.operation_table_by_name_input = self._generate_op_table(
-            self.profile_data.op_list_groupby_name_input, True)
-        profile_run.operation_stack_by_name_input = self._generate_op_table_for_stack(True)
+        if self.profile_data.events:
+            profile_run.views.append(consts.OP_VIEW)
+            profile_run.operation_pie_by_name = self._generate_op_pie()
+            profile_run.operation_table_by_name = self._generate_op_table(self.profile_data.op_list_groupby_name)
+            profile_run.operation_stack_by_name = self._generate_op_table_for_stack(False)
+            profile_run.operation_pie_by_name_input = self._generate_op_pie(True)
+            profile_run.operation_table_by_name_input = self._generate_op_table(
+                self.profile_data.op_list_groupby_name_input, True)
+            profile_run.operation_stack_by_name_input = self._generate_op_table_for_stack(True)
 
         if self.profile_data.has_kernel:
             profile_run.views.append(consts.KERNEL_VIEW)
@@ -50,8 +52,9 @@ class RunGenerator(object):
             profile_run.kernel_table = self._generate_kernel_table()
             profile_run.tc_pie = self._generate_tc_pie()
 
-        profile_run.views.append(consts.TRACE_VIEW)
-        profile_run.trace_file_path = self.profile_data.trace_file_path
+        if self.profile_data.events:
+            profile_run.views.append(consts.TRACE_VIEW)
+            profile_run.trace_file_path = self.profile_data.trace_file_path
 
         profile_run.gpu_metrics = self.profile_data.gpu_metrics_parser.get_gpu_metrics()
 

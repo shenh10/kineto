@@ -43,7 +43,7 @@ class RunProfileData(object):
         self.profiler_start_ts = float('inf')
         self.events: List[BaseEvent] = []
 
-        trace_body = trace_json['traceEvents']
+        trace_body = trace_json.get('traceEvents', [])
         fwd_bwd_events = []
         for data in trace_body:
             if data.get('cat') == 'forward_backward':
@@ -186,7 +186,6 @@ class RunProfileData(object):
                 d['children'] = []
                 parent.append(d)
                 process_tree_stats(d['children'], stats.children)
-
         process_tree_stats(result['tree'], tree_data)
 
         return result
@@ -197,7 +196,7 @@ class RunProfileData(object):
     @staticmethod
     def parse(worker, span, path, cache_dir):
         trace_path, trace_json = RunProfileData._preprocess_file(path, cache_dir)
-    
+        
         profile = RunProfileData.from_json(worker, span, trace_json)
         profile.trace_file_path = trace_path
 
@@ -207,10 +206,11 @@ class RunProfileData(object):
             profile.codebase['python_bottleneck']['image_content'] = image_content
             profile.codebase['python_bottleneck']['pstats'] = pstats_data
         
-        model_stats_path = RunProfileData.retreive_model_stats(trace_path)
-        if model_stats_path:
-            model_stats_data = RunProfileData.parse_model_stats_impl(model_stats_path)
-            profile.model_stats = model_stats_data
+        if trace_json:
+            model_stats_path = RunProfileData.retreive_model_stats(trace_path)
+            if model_stats_path:
+                model_stats_data = RunProfileData.parse_model_stats_impl(model_stats_path)
+                profile.model_stats = model_stats_data
         return profile
 
     @staticmethod
@@ -263,7 +263,7 @@ class RunProfileData(object):
         data = io.read(trace_path)
         if trace_path.endswith('.gz'):
             data = gzip.decompress(data)
-
+        
         json_reencode = False
         try:
             trace_json = json.loads(data)
@@ -282,6 +282,8 @@ class RunProfileData(object):
                     json_reencode = True
 
         # work-around to remove the 'Record Window End' events to avoid the huge end timestamp
+        if "ktt_profiler_pl" in trace_json:
+            return trace_path, {}
         event_list = trace_json['traceEvents']
         end_index = None
         start_index = None

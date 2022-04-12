@@ -103,28 +103,28 @@ export const ModelView: React.FC<IProps> = (props) => {
       })
   }, [run, worker, span])
 
-  // const handleModuleChange: SelectProps['onChange'] = (event) => {
-  //   setModule(event.target.value as number)
-  // }
+  const handleModuleChange: SelectProps['onChange'] = (event) => {
+    setModule(event.target.value as number)
+  }
 
-  // const moduleComponent = () => {
-  //   const moduleFragment = (
-  //     <React.Fragment>
-  //       <InputLabel id="module-graph">Module</InputLabel>
-  //       <Select value={module} onChange={handleModuleChange}>
-  //         {modules.map((m) => (
-  //           <MenuItem value={m}>{m}</MenuItem>
-  //         ))}
-  //       </Select>
-  //     </React.Fragment>
-  //   )
+  const moduleComponent = () => {
+    const moduleFragment = (
+      <React.Fragment>
+        <InputLabel id="module-graph">Module</InputLabel>
+        <Select value={module} onChange={handleModuleChange}>
+          {modules.map((m) => (
+            <MenuItem value={m}>{m}</MenuItem>
+          ))}
+        </Select>
+      </React.Fragment>
+    )
 
-  //   if (!modules || modules.length <= 1) {
-  //     return <div className={classes.hide}>{moduleFragment}</div>
-  //   } else {
-  //     return moduleFragment
-  //   }
-  // }
+    if (!modules || modules.length <= 1) {
+      return <div className={classes.hide}>{moduleFragment}</div>
+    } else {
+      return moduleFragment
+    }
+  }
 
   return (
     <div className={classes.root}>
@@ -160,6 +160,7 @@ export const ModelView: React.FC<IProps> = (props) => {
                 }}
               />
             )}
+            {moduleComponent()}
           </Grid>
         </CardContent>
       </Card>
